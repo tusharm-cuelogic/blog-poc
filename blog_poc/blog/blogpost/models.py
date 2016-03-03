@@ -5,21 +5,21 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
-	contact_no = models.IntegerField()
+	contact_no = models.IntegerField(null=True)
 	address = models.TextField()
 	about_me = models.TextField()
 	socialmedia_key = models.CharField(max_length=200)
 	user_photo = models.CharField(max_length=200)
 	activation_key = models.CharField(max_length=40)
-	key_generated = models.DateTimeField()
+	key_generated = models.DateTimeField(auto_now_add=True)
 
 
 class Post(models.Model):
 
 	title = models.CharField(max_length=200)
 	content = models.TextField()
+	pub_date = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True)
-	pub_date = models.DateTimeField('date published')
 	slug = models.SlugField(max_length=200)
 	tags = models.CharField(max_length=200)
 	status = models.CharField(max_length=10)

@@ -1,5 +1,6 @@
 from django import forms
 from captcha.fields import CaptchaField
+from django.contrib.auth.models import User
 
 attrs_dict = {'class': 'form-control', 'style': 'width:100%', 'required': 'required'}
 
@@ -15,7 +16,7 @@ class UserForm(forms.Form):
 								widget=forms.TextInput(attrs=attrs_dict),
 								error_messages={'required': 'Please enter your first name'})
 	last_name = forms.CharField(max_length=30,
-								widget=forms.TextInput(attrs=attrs_dict), strip=True, 
+								widget=forms.TextInput(attrs=attrs_dict), strip=True,
 								error_messages={'required': 'Please enter your last name'})
 	email = forms.EmailField(widget=forms.EmailInput(attrs=dict(attrs_dict,
 							maxlength=200)),
@@ -29,3 +30,28 @@ class UserForm(forms.Form):
 										label='Confirm Password',
 										error_messages={'required': 'Please enter your confirm password'})
 	captcha = CaptchaField()
+
+	def clean_email(self):
+		"""
+		Validates that the email is not already in use.
+
+		"""
+		email = self.cleaned_data['email']
+		if email != "":
+			try:
+				user = User.objects.get(email__exact=email)
+			except User.DoesNotExist:
+				return ""
+			else:
+				raise forms.ValidationError(u'The email "%s" is already taken. Please choose another.' % email)
+
+
+	def clean_confirmpassword(self):
+		"""
+		Validates that the two password inputs match.
+
+		"""
+		password = self.cleaned_data['password']
+		confirm_password = self.cleaned_data['confirmpassword']
+		if password != confirm_password:
+			raise forms.ValidationError(u'You must type the same password each time')
