@@ -7,8 +7,5 @@ urlpatterns = patterns('',
 		url(r'^activate/(?P<activation_key>\w+)/$', activate_view),
 		url(r'^profile/edit/$', edit_profile_view, name='edit'),
 		url(r'^profile/', profile_view, name='profile'),
-		url(r'^add/', add_blog_view, name="editblog"),
-		url(r'^edit/', edit_blog_view, name="addblog"),
 		url(r'^upload-pic/', upload_pic, name='upload-pic'),
-		url(r'^posts/', posts_view, name='posts'),
 	)
