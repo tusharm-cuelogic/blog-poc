@@ -148,3 +148,17 @@ class UploadUserPicForm(forms.Form):
         widget=forms.FileField,
         label='Upload Field',
         )
+
+class PostForm(forms.Form):
+
+    CHOICES = [('publish', 'Publish'), ('draft', 'Draft')]
+
+    title = forms.CharField(label='Title',
+                            widget=forms.TextInput(attrs=dict(attrs_dict,
+                            placeholder='Title')), error_messages={'required': 'Please enter title'})
+    body = forms.CharField(label='Body',
+                            widget=forms.Textarea(attrs=dict(attrs_dict)), error_messages={'required': 'Please enter body'})
+    tags = forms.CharField(label='Tags',
+                            widget=forms.DateInput(attrs=dict(attrs_dict,
+                            placeholder='Tags')), error_messages={'required': 'Please enter tags'})
+    status = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(attrs=dict({'required': 'required', 'class':'radiobutton'})), error_messages={'required': 'Please select status'})

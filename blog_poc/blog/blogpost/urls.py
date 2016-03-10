@@ -8,4 +8,6 @@ urlpatterns = patterns('',
 		url(r'^profile/edit/$', edit_profile_view, name='edit'),
 		url(r'^profile/', profile_view, name='profile'),
 		url(r'^upload-pic/', upload_pic, name='upload-pic'),
+		url(r'^add/', add_blog_view, name="editblog"),
+		url(r'^edit/', edit_blog_view, name="addblog"),
 	)

@@ -166,6 +166,79 @@ def change_password_view(request):
     return render(request, 'blogpost/change-password.html', {'form': form})
 
 
+def add_blog_view(request):
+
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+
+        if form.is_valid():
+
+            user = User.objects.get(id=request.user.id)
+            title = request.POST.get('title', None)
+            body = request.POST.get('body', None)
+            tags = request.POST.get('tags', None)
+            status = request.POST.get('status', None)
+
+            blog_post = Post()
+            blog_post.title = title
+            blog_post.content = body
+            blog_post.tags = tags
+            blog_post.status = status
+            blog_post.rating = 0
+            blog_post.slug = slugify(title)
+            blog_post.userid = user
+            blog_post.save()
+
+            success_message = "Blog added successfully"
+
+            messages.add_message(request, messages.INFO, success_message)
+            return HttpResponseRedirect(reverse('dashboard'))
+    else:
+        form = PostForm()
+
+    return render(request, 'blogpost/addblog.html', {'form': form})
+
+
+def edit_blog_view(request):
+    id = request.GET.get('id', None)
+
+    if id is not None:
+        post = get_object_or_404(Post, id=id)
+    else:
+        post = None
+
+    postdata = {'title': post.title,
+                'body': post.content,
+                'tags': post.tags,
+                'status': post.status}
+
+    if request.method == 'POST':
+        postform = PostForm(request.POST)
+
+        if postform.is_valid:
+
+            title = request.POST.get('title', None)
+            body = request.POST.get('body', None)
+            tags = request.POST.get('tags', None)
+            status = request.POST.get('status', None)
+
+            Post.objects.filter(id=id).update(title=title,
+                                                content=body,
+                                                tags=tags,
+                                                status=status,
+                                                modified=datetime.now())
+
+            success_message = "Blog updated successfully"
+
+            messages.add_message(request, messages.INFO, success_message)
+            return HttpResponseRedirect(reverse('dashboard'))
+
+    else:
+        postform = PostForm(initial=postdata)
+
+    return render(request, 'blogpost/editblog.html', {'form': postform})
+
+
 def generate_activation_key(new_user):
     salt = sha.new(str(random.random())).hexdigest()[:5]
     activation_key = sha.new(salt + new_user.email).hexdigest()
