@@ -1,0 +1,10 @@
+{% load humanize %}
+Hello {{author_first_name}} {{author_last_name}}
+
+{{first_name}} {{last_name}} commented on your blog <a href='{{blog_url}}'>"{{title}}"</a> as follow:
+
+<p>"{{comment}}"</p>
+
+
+
+

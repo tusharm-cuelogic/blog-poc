@@ -8,16 +8,26 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.text import slugify
 from blogpost.forms import *
 from blogpost.models import *
+from django.db.models import Q
 from django.conf import settings
 from django.template import Context, loader
 from datetime import datetime
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.decorators import user_passes_test
+from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 
+def authenticated_only(user):
+    return (user.is_authenticated())
 
 def signup_view(request):
+
+    if request.user.id:
+        return HttpResponseRedirect(reverse('dashboard'))
 
     if request.method == 'POST':
         form = UserForm(request.POST)
@@ -86,8 +96,11 @@ def activate_view(request, activation_key):
                 success_message = "your email '%s' is already verified" % user.email
                 messages.add_message(request, messages.INFO, success_message)
                 return HttpResponseRedirect(reverse('dashboard'))
-    return False
+    else:
+        return HttpResponseRedirect(reverse('signup'))
 
+
+@user_passes_test(authenticated_only, login_url="/")
 def edit_profile_view(request):
 
     id = request.user.id
@@ -118,7 +131,8 @@ def edit_profile_view(request):
 
             User.objects.filter(id=id).update(first_name=first_name,
                                                 last_name=last_name,
-                                                email=email)
+                                                email=email,
+                                                username=email)
 
             UserProfile.objects.filter(user_id=id).update(contact_no=contact_no,
                                                             address=address,
@@ -134,15 +148,28 @@ def edit_profile_view(request):
     return render(request, 'blogpost/edit_profile.html',
                 {'userprofileform': userprofileform})
 
-def profile_view(request):
-    id = request.GET.get('id', None)
+def profile_view(request, userid=None):
 
-    if id is None:
-        userprofileinfo = get_object_or_404(UserProfile, user_id=request.user.id)
-        return render(request, 'blogpost/profile.html',
-                        {'userprofileinfo': userprofileinfo})
+    if userid is None:
+        id = request.user.id
+    else:
+        id = userid
+
+    userinfo = User.objects.get(id=id)
+    userprofileinfo = get_object_or_404(UserProfile, user_id=id)
+
+    if userprofileinfo.user_photo:
+        pass
+    else:
+        userprofileinfo.user_photo = "default.png"
+
+    return render(request, 'blogpost/profile.html',
+                    {'userinfo': userinfo,
+                    'userprofileinfo': userprofileinfo,
+                    'userid': userid})
 
 
+@user_passes_test(authenticated_only, login_url="/")
 def change_password_view(request):
 
     if request.method == 'POST':
@@ -166,6 +193,7 @@ def change_password_view(request):
     return render(request, 'blogpost/change-password.html', {'form': form})
 
 
+@user_passes_test(authenticated_only, login_url="/")
 def add_blog_view(request):
 
     if request.method == 'POST':
@@ -192,18 +220,18 @@ def add_blog_view(request):
             success_message = "Blog added successfully"
 
             messages.add_message(request, messages.INFO, success_message)
-            return HttpResponseRedirect(reverse('dashboard'))
+            return HttpResponseRedirect(reverse('posts'))
     else:
         form = PostForm()
 
     return render(request, 'blogpost/addblog.html', {'form': form})
 
 
-def edit_blog_view(request):
-    id = request.GET.get('id', None)
+@user_passes_test(authenticated_only, login_url="/")
+def edit_blog_view(request, postid):
 
-    if id is not None:
-        post = get_object_or_404(Post, id=id)
+    if postid is not None:
+        post = get_object_or_404(Post, id=postid)
     else:
         post = None
 
@@ -222,7 +250,7 @@ def edit_blog_view(request):
             tags = request.POST.get('tags', None)
             status = request.POST.get('status', None)
 
-            Post.objects.filter(id=id).update(title=title,
+            Post.objects.filter(id=postid).update(title=title,
                                                 content=body,
                                                 tags=tags,
                                                 status=status,
@@ -231,7 +259,7 @@ def edit_blog_view(request):
             success_message = "Blog updated successfully"
 
             messages.add_message(request, messages.INFO, success_message)
-            return HttpResponseRedirect(reverse('dashboard'))
+            return HttpResponseRedirect(reverse('posts'))
 
     else:
         postform = PostForm(initial=postdata)
@@ -239,21 +267,7 @@ def edit_blog_view(request):
     return render(request, 'blogpost/editblog.html', {'form': postform})
 
 
-def generate_activation_key(new_user):
-    salt = sha.new(str(random.random())).hexdigest()[:5]
-    activation_key = sha.new(salt + new_user.email).hexdigest()
-    return activation_key
-
-
-def send_activation_email(new_user, activation_key):
-    current_domain = settings.SITE_URL
-    subject = "Activate your new account at %s" % current_domain
-    message_template = loader.get_template('blogpost/activation_email.txt')
-    message_context = Context({'site_url': 'http://%s/' % current_domain,
-                            'activation_key': activation_key})
-    message = message_template.render(message_context)
-    send_mail(subject, message, 'no-reply@gmail.com', [new_user.email])
-
+@user_passes_test(authenticated_only, login_url="/")
 def upload_pic(request):
     if request.method == 'POST':
         form = UploadUserPicForm(request.POST, request.FILES)
@@ -271,3 +285,279 @@ def upload_pic(request):
     else:
         form = UploadUserPicForm()
     return HttpResponseRedirect(reverse('profile'))
+
+def posts_view(request):
+
+    searchType = request.POST.get('search_type', None)
+    searchText = request.POST.get('search_text', None)
+    dateFrom = request.POST.get('from', None)
+    dateTo = request.POST.get('to', None)
+
+    allPost = searchQuery(request)
+
+    user_search_obj = []
+    date_search_obj = []
+    user_blog_data_list = []
+
+    if searchType:
+        user_search_obj = [searchText, searchType]
+
+    if dateFrom and dateTo:
+        date_search_obj = [dateFrom, dateTo]
+
+    paginator = Paginator(allPost, 10)
+    page = request.GET.get('page')
+
+    try:
+        postdata = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        postdata = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        postdata = paginator.page(paginator.num_pages)
+
+    if allPost:
+        for posts in postdata:
+            user_blog_data = {}
+            try:
+                user_blog_data['post_info'] = posts
+                user_blog_data['user_obj'] = User.objects.get(id=posts.userid.id)
+            except:
+                return "Object does not exist"
+            user_blog_data_list.append(user_blog_data)
+        user_dict = {'blog_post': user_blog_data_list, 'pagination_data': postdata}
+    else:
+        user_dict = {}
+
+    user_dict['search_value'] = user_search_obj
+    user_dict['date_search_value'] = date_search_obj
+
+    return render(request, 'blogpost/posts.html', user_dict)
+
+def blog_detail_view(request, **kwargs):
+    postid = kwargs['postid']
+    post = get_object_or_404(Post, id=postid)
+
+    blog_data = {}
+    if post:
+        try:
+            blog_data['post'] = post
+            blog_data['user_obj'] = User.objects.get(id=post.userid.id)
+            blog_data['userprofile_obj'] = UserProfile.objects.get(user_id=post.userid.id)
+
+            if blog_data['userprofile_obj'].user_photo:
+                pass
+            else:
+                blog_data['userprofile_obj'].user_photo = "default.png"
+
+            comment_list = commentList(postid)
+            comment_count = Comment.objects.filter(postid_id=postid).count()
+
+            if not comment_count:
+                comment_count = 0
+        except:
+            return "Object does not exist"
+
+        user_dict = {'blog_post': blog_data, 'comment_list': comment_list,
+                    'comment_count': comment_count}
+
+    return render(request, 'blogpost/blog.html', user_dict)
+
+
+@user_passes_test(authenticated_only, login_url="/")
+def my_blog_view(request):
+
+    searchType = request.POST.get('search_type', None)
+    searchText = request.POST.get('search_text', None)
+    dateFrom = request.POST.get('from', None)
+    dateTo = request.POST.get('to', None)
+
+    allPost = myBlogSearchQuery(request)
+
+    user_search_obj = []
+    date_search_obj = []
+    user_blog_data_list = []
+
+    if searchType:
+        user_search_obj = [searchText, searchType]
+
+    if dateFrom and dateTo:
+        date_search_obj = [dateFrom, dateTo]
+
+    paginator = Paginator(allPost, 10)
+    page = request.GET.get('page')
+
+    try:
+        postdata = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        postdata = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        postdata = paginator.page(paginator.num_pages)
+
+    if allPost:
+        for posts in postdata:
+            user_blog_data = {}
+            try:
+                user_blog_data['post_info'] = posts
+                user_blog_data['user_obj'] = User.objects.get(id=posts.userid.id)
+            except:
+                return "Object does not exist"
+            user_blog_data_list.append(user_blog_data)
+        user_dict = {'blog_post': user_blog_data_list, 'pagination_data': postdata}
+    else:
+        user_dict = {}
+
+    user_dict['search_value'] = user_search_obj
+    user_dict['date_search_value'] = date_search_obj
+    user_dict['my_blog'] = 'my_blog'
+
+    return render(request, 'blogpost/posts.html', user_dict)
+
+
+def generate_activation_key(new_user):
+    salt = sha.new(str(random.random())).hexdigest()[:5]
+    activation_key = sha.new(salt + new_user.email).hexdigest()
+    return activation_key
+
+
+def send_activation_email(new_user, activation_key):
+    current_domain = settings.SITE_URL
+    subject = "Activate your new account at %s" % current_domain
+    message_template = loader.get_template('blogpost/activation_email.txt')
+    message_context = Context({'site_url': 'http://%s/' % current_domain,
+                            'activation_key': activation_key})
+    message = message_template.render(message_context)
+    send_mail(subject, message, 'no-reply@gmail.com', [new_user.email])
+
+
+def searchQuery(request):
+    searchType = request.POST.get('search_type', None)
+    searchText = request.POST.get('search_text', None)
+
+    if searchType:
+
+        if not searchType == "author" and not searchType == "date":
+            searchField = str(searchType) + str('__icontains')
+            allPost = Post.objects.filter(status='publish', **{searchField: searchText}).order_by('-pub_date')
+
+        elif searchType == "date":
+            dateFrom = request.POST.get('from', None) + " 00:00:00"
+            dateTo = request.POST.get('to', None) + " 23:59:00"
+
+            if dateFrom and dateTo:
+                allPost = Post.objects.filter(pub_date__range=[dateFrom, dateTo]).order_by('-pub_date')
+        else:
+            allUserData = User.objects.filter(Q(first_name__contains=searchText) | Q(last_name__contains=searchText), is_active=1)
+            user_ids = []
+            for user in allUserData:
+                user_ids.append(user.id)
+            allPost = Post.objects.filter(status='publish', userid_id__in=user_ids).order_by('-pub_date')
+    else:
+        allPost = Post.objects.filter(status='publish').order_by('-pub_date')
+
+    return allPost
+
+
+def myBlogSearchQuery(request):
+    searchType = request.POST.get('search_type', None)
+    searchText = request.POST.get('search_text', None)
+
+    if searchType:
+
+        if not searchType == "date":
+            searchField = str(searchType) + str('__icontains')
+            allPost = Post.objects.filter(status='publish', **{searchField: searchText, 'userid_id': request.user.id}).order_by('-pub_date')
+
+        elif searchType == "date":
+            dateFrom = request.POST.get('from', None) + " 00:00:00"
+            dateTo = request.POST.get('to', None) + " 23:59:00"
+
+            if dateFrom and dateTo:
+                allPost = Post.objects.filter(pub_date__range=[dateFrom, dateTo], userid_id=request.user.id).order_by('-pub_date')
+    else:
+        allPost = Post.objects.filter(status='publish', userid_id=request.user.id).order_by('-pub_date')
+
+    return allPost
+
+@csrf_exempt
+def add_comment_view(request, postid):
+
+    comment = request.POST.get("comment")
+    comment_info = {}
+    if postid and comment:
+        comment_data = Comment()
+        comment_data.comment = comment
+        comment_data.postid_id = postid
+        comment_data.userid_id = request.user.id
+        comment_data.save()
+
+        comment_obj = Comment.objects.get(id=comment_data.id)
+
+        if comment_obj:
+            comment_info['comments'] = comment_obj
+            comment_info['user_obj'] = User.objects.get(id=comment_obj.userid_id)
+            comment_info['userprofile_obj'] = UserProfile.objects.get(user_id=comment_obj.userid_id)
+
+        send_comment_email(request, comment_obj)
+
+    if request.is_ajax():
+        html = render_to_string('blogpost/comment.html', {'comment_info': comment_info})
+    return HttpResponse(html)
+
+def commentList(postid):
+    comment_obj = Comment.objects.filter(postid_id=postid).order_by('-timestamp')
+
+    comment_list = []
+    if comment_obj:
+        for comments in comment_obj:
+            comment_data = {}
+            comment_data['comment_info'] = comments
+            comment_data['comment_user_obj'] = User.objects.get(id=comments.userid_id)
+            comment_data['comment_userprofile_obj'] = UserProfile.objects.get(user_id=comments.userid_id)
+
+            if comment_data['comment_userprofile_obj'].user_photo:
+                pass
+            else:
+                comment_data['comment_userprofile_obj'].user_photo = "default2.png"
+
+            comment_list.append(comment_data)
+    return comment_list
+
+def send_comment_email(request, comment_info):
+    current_domain = settings.SITE_URL
+    subject = "got a comment on your blog"
+    message_template = loader.get_template('blogpost/comment_email.txt')
+
+    post = Post.objects.get(id=comment_info.postid_id)
+    user_data = User.objects.get(id=post.userid_id)
+
+    if post.userid_id != request.user.id:
+        message_context = Context({'site_url': 'http://%s/' % current_domain,
+                                'author_first_name': user_data.first_name,
+                                'author_last_name': user_data.last_name,
+                                'first_name': request.user.first_name,
+                                'last_name': request.user.last_name,
+                                'blog_url': '%s/blog/%s-%s' % (current_domain, post.slug, post.id),
+                                'title': post.title,
+                                'comment': comment_info.comment})
+
+        message = message_template.render(message_context)
+        send_mail(subject, message, 'no-reply@gmail.com', [user_data.email])
+
+
+@csrf_exempt
+def delete_comment_view(request):
+
+    commentid = request.POST.get("commentid")
+
+    if commentid:
+        comment = get_object_or_404(Comment, id=commentid)
+        comment.delete()
+        comment_response = "success"
+    else:
+        comment_response = "error"
+
+    return HttpResponse(comment_response)

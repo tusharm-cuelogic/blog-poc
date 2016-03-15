@@ -2,7 +2,37 @@
 {% load static %}
 
 {% block body %}
-<div class="jumbotron">
-	<h1 align='center'>Blog Dashboard</h1>
+<div>
+	<div class='container'>
+
+	    <div class="blog-title">
+		    <h1 class="page-title pull-left">Recent Blogs</h1>
+		</div>
+	    <hr class="clearfix" />
+	    {% if blog_post %}
+	    	{% for posts in blog_post %}
+   				<div class="post-cont">  
+					<div class="post-header">
+				    	<h1 class="post-title"><a href="/blog/{{posts.post_info.slug}}-{{posts.post_info.id}}">{{posts.post_info.title}}</a></h1>
+				        <div class="list-countersec"> <span class="by-author">by 
+				        	{% if posts.post_info.userid_id == user.id %}
+					        	<a href="/blog/profile">
+					        		{{posts.user_obj.first_name}} {{posts.user_obj.last_name}}
+					        	</a>
+					        {% else %}
+					        	<a href="/blog/profile/{{posts.post_info.userid_id}}">
+					        		{{posts.user_obj.first_name}} {{posts.user_obj.last_name}}
+					        	</a>
+				        	{% endif %}
+				        	</span> <span class="date">{{posts.post_info.pub_date|date:"M d, Y"}}</span>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				
+	    	{% endfor %}
+	    	<div><a href="/blog/posts" class="view_more">View More</a></div>
+	    {% endif %}
+	</div>
 </div>
 {% endblock body %}

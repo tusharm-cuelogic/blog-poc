@@ -24,5 +24,4 @@ urlpatterns = [
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': 'dashboard'}, name='logout'),
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name="login"),
     url(r'^captcha/', include('captcha.urls')),
-    url(r'^accounts/', include('blogpost.urls')),
 ]
