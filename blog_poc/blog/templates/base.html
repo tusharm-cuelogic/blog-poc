@@ -1,4 +1,5 @@
 {% load staticfiles %}
+
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
@@ -21,6 +22,8 @@
 	<script src="{% static 'blog/js/jquery-ui.js' %}"></script>
 	<script src="{% static 'blog/js/bootstrap.min.js' %}"></script>
 	<script src="{% static 'blog/js/common.js' %}"></script>
+	<script src="http://connect.facebook.net/en_US/all.js"></script>
+	<script src="{% static 'blog/js/facebook.js' %}"></script>
 	<script type="text/javascript">
 		base_url = "http://127.0.0.1:8000/"
 	</script>
@@ -40,7 +43,7 @@
                 </button>
                 <a class="navbar-brand" href="{% url 'dashboard' %}">Home</a>
             </div>
-            
+
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
