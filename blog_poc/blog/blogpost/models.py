@@ -8,10 +8,16 @@ class UserProfile(models.Model):
 	contact_no = models.CharField(max_length=20, null=True)
 	address = models.TextField()
 	about_me = models.TextField()
-	socialmedia_key = models.CharField(max_length=200)
-	user_photo = models.FileField(upload_to=None, max_length=200,)
-	activation_key = models.CharField(max_length=40)
+	socialmedia_key = models.CharField(max_length=200, blank=True, null=True,)
+	user_photo = models.FileField(upload_to='static/blog/user_profile_img',
+									max_length=200,
+									blank=True,
+									null=True,)
+	activation_key = models.CharField(max_length=40, blank=True, null=True,)
 	key_generated = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return self.user.first_name+" "+self.user.last_name
 
 
 class Post(models.Model):
@@ -20,11 +26,15 @@ class Post(models.Model):
 	content = models.TextField()
 	pub_date = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True)
-	slug = models.SlugField(max_length=200)
+	slug = models.SlugField(max_length=200, blank=True, null=True,)
 	tags = models.CharField(max_length=200)
 	status = models.CharField(max_length=10)
-	rating = models.IntegerField()
+	rating = models.IntegerField(blank=True, null=True,)
 	userid = models.ForeignKey(User, on_delete=models.CASCADE)
+
+	def __unicode__(self):
+		return self.title
+
 
 class Comment(models.Model):
 
@@ -32,3 +42,6 @@ class Comment(models.Model):
 	timestamp = models.DateTimeField(auto_now_add=True)
 	userid = models.ForeignKey(User, on_delete=models.CASCADE)
 	postid = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+	def __unicode__(self):
+		return self.comment

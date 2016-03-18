@@ -279,7 +279,7 @@ def upload_pic(request):
             path = default_storage.save(settings.USER_IMAGE_PATH + str(files.name), 
                                         ContentFile(files.read()))
             tmp_file_path = os.path.join(settings.USER_IMAGE_PATH, path)
-            photo = files.name
+            photo = 'static/blog/user_profile_img/'+files.name
             UserProfile.objects.filter(user_id=request.user.id).update(user_photo=photo)
         else:
             success_message = "Something has went wrong, please try again."

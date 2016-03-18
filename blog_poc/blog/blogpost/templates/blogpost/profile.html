@@ -22,13 +22,13 @@
 							
 							{% if userid == None %}
 								<a href="javascript:void(0);" class="pos-relative upload-img">
-									<img class="media-object profile-pic img-circle" src="/static/blog/user_profile_img/{{userprofileinfo.user_photo}}" alt="{{ user.first_name }}">
+									<img class="media-object profile-pic img-circle" src="/{{userprofileinfo.user_photo}}">
 									<span class="img-text"><span><strong>Upload Pic</strong></span></span>
 								</a>
 								<input id="file-input" type="file" name="user_pic" class="hide"/>
 							{% else %}
 								<a href="javascript:void(0);" class="pos-relative upload-img">
-									<img class="media-object profile-pic img-circle" src="/static/blog/user_profile_img/{{userprofileinfo.user_photo}}" alt="{{ user.first_name }}">
+									<img class="media-object profile-pic img-circle" src="/{{userprofileinfo.user_photo}}">
 								</a>
 							{% endif %}
 						</form>
