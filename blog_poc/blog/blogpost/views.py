@@ -289,14 +289,14 @@ def upload_pic(request):
         form = UploadUserPicForm()
     return HttpResponseRedirect(reverse('profile'))
 
-def posts_view(request):
+def posts_view(request, tags=None):
 
     searchType = request.POST.get('search_type', None)
     searchText = request.POST.get('search_text', None)
     dateFrom = request.POST.get('from', None)
     dateTo = request.POST.get('to', None)
 
-    allPost = searchQuery(request)
+    allPost = searchQuery(request, tags)
 
     user_search_obj = []
     date_search_obj = []
@@ -442,9 +442,13 @@ def send_activation_email(new_user, activation_key):
     send_mail(subject, message, 'no-reply@gmail.com', [new_user.email])
 
 
-def searchQuery(request):
+def searchQuery(request, tags):
     searchType = request.POST.get('search_type', None)
     searchText = request.POST.get('search_text', None)
+
+    if tags is not None:
+        searchType = 'content'
+        searchText = tags
 
     if searchType:
 
