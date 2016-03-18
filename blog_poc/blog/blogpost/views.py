@@ -21,6 +21,9 @@ from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 
+import nltk
+from nltk.tag import pos_tag, map_tag
+
 def authenticated_only(user):
     return (user.is_authenticated())
 
@@ -339,12 +342,18 @@ def blog_detail_view(request, **kwargs):
     postid = kwargs['postid']
     post = get_object_or_404(Post, id=postid)
 
+    sizes = [11, 12, 14, 16, 18, 20]
+
     blog_data = {}
     if post:
         try:
             blog_data['post'] = post
             blog_data['user_obj'] = User.objects.get(id=post.userid.id)
             blog_data['userprofile_obj'] = UserProfile.objects.get(user_id=post.userid.id)
+
+            text = nltk.word_tokenize(post.content)
+            posTagged = pos_tag(text)
+            simplifiedTags = [(word, map_tag('en-ptb', 'universal', tag)) for word, tag in posTagged]
 
             if blog_data['userprofile_obj'].user_photo:
                 pass
@@ -360,7 +369,7 @@ def blog_detail_view(request, **kwargs):
             return "Object does not exist"
 
         user_dict = {'blog_post': blog_data, 'comment_list': comment_list,
-                    'comment_count': comment_count}
+                    'comment_count': comment_count, 'simplifiedTags': simplifiedTags, 'sizes': sizes}
 
     return render(request, 'blogpost/blog.html', user_dict)
 

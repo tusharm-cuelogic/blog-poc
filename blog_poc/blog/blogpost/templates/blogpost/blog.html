@@ -112,8 +112,14 @@
 					</div>
 					<div class="widget" id="tags">
 						<h3 class="widget-title">Tags</h3>
-						<div class="utcw-4nkbnb0 tagcloud">
-							{{blog_post.post.tags}}
+						<div class="utcw-4nkbnb0 tagcloud tag-cloud">
+							<!-- {{blog_post.post.tags}} -->
+
+							{% for Tags in simplifiedTags %}
+								{% if Tags.1 == 'NOUN' %}
+									<a href="/blog/posts/{{ Tags.0 }}/" style="font-size: {{ sizes|random }}px">{{Tags.0}}</a>
+								{% endif %}
+							{% endfor %}
 						</div>
 					</div>
 				</div>
