@@ -1,0 +1,11 @@
+from django.conf.urls import patterns, url
+from blogpost.views import *
+
+urlpatterns = patterns('',
+		url(r'^signup/', signup_view, name='signup'),
+		url(r'^change-password/', change_password_view, name='change-password'),
+		url(r'^activate/(?P<activation_key>\w+)/$', activate_view),
+		url(r'^profile/edit/$', edit_profile_view, name='edit'),
+		url(r'^profile/', profile_view, name='profile'),
+		url(r'^upload-pic/', upload_pic, name='upload-pic'),
+	)
