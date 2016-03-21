@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<div>
+
+	<div class="container profile">
+
+		<div class="container-fluid">
+	        <div class="row">
+	            <h3 class="pull-left">Profile</h3>
+	        </div>
+	    </div>
+	    <hr class="clearfix" />
+		<div class="form-group col-md-offset-3">
+			<div class="row">
+
+				<!--new code-->
+				<div class="media">
+					<div class="media-left">
+						<form data-toggle="validator" role="form" action="/blog/upload-pic/" method="post" enctype="multipart/form-data" class="custom-form form-horizontal" name="updatePic" id="updatePic">{% csrf_token %}
+							
+							{% if userid == None %}
+								<a href="javascript:void(0);" class="pos-relative upload-img">
+									<img class="media-object profile-pic img-circle" src="/{{userprofileinfo.user_photo}}">
+									<span class="img-text"><span><strong>Upload Pic</strong></span></span>
+								</a>
+								<input id="file-input" type="file" name="user_pic" class="hide"/>
+							{% else %}
+								<a href="javascript:void(0);" class="pos-relative upload-img">
+									<img class="media-object profile-pic img-circle" src="/{{userprofileinfo.user_photo}}">
+								</a>
+							{% endif %}
+						</form>
+					</div>
+					<div class="media-body">
+						<h4 class="media-heading profile-title">
+							{{ userinfo.first_name }} {{ userinfo.last_name }}
+							
+							{% if userid == None %}
+							<a href="{% url 'blogpost:edit' %}">
+								<i class="glyphicon glyphicon-edit edit-icon"></i>
+							</a>
+							{% endif %}
+						</h4>
+						<div class="col-md-12">
+							<label>Email:</label>
+							{{ userinfo.email }}
+						</div>
+						<div class="col-md-12">
+							<label>Address:</label>
+							{{ userprofileinfo.address }}
+						</div>
+						<div class="col-md-12">
+							<label>Phone Number:</label>
+							{% if userprofileinfo.contact_no != None %}{{ userprofileinfo.contact_no }}{% endif %}
+						</div>
+						<div class="col-md-12">
+							<label>About Me:</label>
+							{{ userprofileinfo.about_me }}
+						</div>
+					</div>
+				</div>
+				<!--end new code-->
+	    	</div>
+	  	</div>
+	</div>
+</div>
+
+<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+  <!-- <script src="{% static "js/profile.js" %}"></script> -->
+  <!-- ================== END PAGE LEVEL JS ================== -->
+  <script>
+  $(document).ready(function() {
+    
+  	$('.upload-img').on('click', function() {
+  		$('#file-input').trigger('click');
+  	});
+  	$('#file-input').on('change', function() {
+       	var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+       	if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only formats are allowed : "+fileExtension.join(', '));
+            return false;
+        } else {
+        	$('#updatePic').submit();
+        }
+  	});
+
+  	// $('.img-text').mouseover(function() {
+  	// 	$('.profile-pic').css('opacity', '0.4');
+  	// });
+
+  	// $('.profile-pic').mouseout(function() {
+  	// 	$('.profile-pic').css('opacity', '1.0');
+  	// });
+
+  }); //end of document ready
+
+  </script>
+{% endblock body %}
