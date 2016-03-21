@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<div>
+	<div class='container'>
+		{% if userprofileform.errors %}
+		<p class="error">Please correct the errors below:</p>
+		{% endif %}
+		<div class="container-fluid">
+	        <div class="row">
+	            <h3 class="pull-left">Edit Profile</h3>
+	        </div>
+	    </div>
+	    <hr class="clearfix" />
+		<form data-toggle="validator" role="form" action="" method="post" name="formprofile" id="formprofile" enctype="multipart/form-data">{% csrf_token %}
+		  
+			<div class="form-group">
+				<label class="control-label">Name</label>
+				<div class="form-inline row">
+		    		<div class="form-group col-sm-6">
+		    			{{ userprofileform.first_name }}
+
+		    			{% if userprofileform.first_name.errors %}
+			    			<div class="help-block with-errors">{{ userprofileform.first_name.errors|join:", " }}</div>
+			    		{% endif %}
+		    		</div>
+		    		
+		    		<div class="form-group col-sm-6">
+		    			{{ userprofileform.last_name }}
+		    			{% if userprofileform.last_name.errors %}
+			    		<div class="help-block with-errors">{{ userprofileform.last_name.errors|join:", " }}</div>
+			    		{% endif %}
+		    		</div>
+		    		
+		  		</div>
+		  	</div>
+		  
+		  	<div class="form-group">
+		    	<div class="form-inline row">
+		    		<div class="form-group col-sm-6">
+		    			<label for="inputPassword" class="control-label">Email</label>
+				      	{{ userprofileform.email }}
+				      	{% if userprofileform.email.errors %}
+				      	<div class="help-block with-errors">{{ userprofileform.email.errors|join:", " }}</div>
+				      	{% endif %}
+				    </div>
+
+				    <div class="form-group col-sm-6">
+		    			<label for="inputPassword" class="control-label">Contact No.</label>
+				      	{{ userprofileform.contactno }}
+				      	{% if userprofileform.contactno.errors %}
+				      	<div class="help-block with-errors">{{ userprofileform.contactno.errors|join:", " }}</div>
+				      	{% endif %}
+				    </div>
+		    	</div>
+		  	</div>
+
+		  	<div class="form-group">
+		    	<label class="control-label">Address</label>
+		    	{{ userprofileform.address }}
+		    	{% if userprofileform.address.errors %}
+		    	<div class="help-block with-errors">{{ userprofileform.address.errors|join:", " }}</div>
+		    	{% endif %}
+		  	</div>
+
+		  	<div class="form-group">
+		    	<label class="control-label">About Me</label>
+		    	{{ userprofileform.aboutme }}
+		    	{% if userprofileform.aboutme.errors %}
+		    	<div class="help-block with-errors">{{ userprofileform.aboutme.errors|join:", " }}</div>
+		    	{% endif %}
+		  	</div>
+
+		  	<div class="form-group">
+		    	<button type="submit" class="btn btn-primary">Update</button>
+		    	<a href="{% url 'blogpost:profile' %}"><button type="button" class="btn btn-primary">Cancel</button></a>
+		    	<a href="{% url 'blogpost:change-password' %}"><button type="button" class="btn btn-primary change-password">Change Password</button></a>
+		    </div>
+		</form>
+
+	</div>
+</div>
+{% endblock body %}

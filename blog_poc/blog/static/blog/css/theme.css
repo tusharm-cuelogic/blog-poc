@@ -1,0 +1,312 @@
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+.theme-dropdown .dropdown-menu {
+  position: static;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.theme-showcase > p > .btn {
+  margin: 5px 0;
+}
+
+.theme-showcase .navbar .container {
+  width: auto;
+}
+
+.media-left a.upload-img{
+	position: relative;
+	display: inline-block;
+  height: 150px;
+  margin: 0 1em 1em 0;
+  position: relative;
+  width: 150px;
+}
+.media-left a.upload-img img.profile-pic{
+position: absolute;
+width: 150px;
+height: 150px;
+}
+
+.media-left a.upload-img span.img-text{
+  background: rgba(0,0,0,0.5);
+  color: white;
+  cursor: pointer;
+  display: table;
+  height: 150px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 150px;
+  opacity: 0;
+  border-radius: 50%;
+}
+
+.media-left a.upload-img:hover span.img-text{
+ opacity: 1;
+}
+
+.media-left a.upload-img span.img-text span{
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+
+  }
+
+.profile-title {
+	font-size: 28px;
+    font-weight: bold;
+    color: #01B4CA;
+    padding-left: 15px;
+}
+
+.edit-icon {
+	color: #000;
+    line-height: 24px;
+}
+.profile .media label{
+line-height: 25px;
+}
+
+.pos-relative {
+	position:relative
+}
+
+.hide {
+	display: none;
+}
+
+.margin-left {
+	margin-left: 15px;
+}
+
+.margin-top50 {
+	margin-top: 50px;
+}
+
+.with-errors{color: #a94442}
+label{vertical-align: top;}
+li{list-style-type:none;}
+.radiobutton{cursor: pointer;}
+#id_status label{cursor: pointer;}
+.change-password{text-decoration: none !important; color: #fff !important;}
+.blog-title {
+    background: #0072bc;
+    height: 56px;
+    margin: 0 0 40px;
+}
+.page-title, .page-titleblack {
+    font-size: 26px;
+    line-height: 54px;
+    color: #fff;
+    margin: 0;
+    text-indent: 15px;
+    font-weight: normal;
+}
+.header-search {
+    background: #fff;
+    margin: 6px;
+    padding: 3px;
+    border: 1px solid #ccc;
+    margin-left: 0px;
+}
+.header-search label {
+    margin: 0;
+    float: left;
+}
+.header-search .search-submit {
+    outline: none;
+    border: none;
+    background: url(../images/search-icon.png) center bottom no-repeat;
+    height: 23px;
+    width: 24px;
+    padding: 0;
+    margin: 4px 0 0 0;
+}
+.header-search label {
+    margin: 0;
+    float: left;
+}
+.header-search input.search-field {
+    background: none;
+    outline: none;
+    border: none;
+    height: 32px;
+    padding: 0;
+    font-size: 14px;
+    line-height: 30px;
+    width: 150px;
+    color: #565656;
+    -webkit-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+/** Blog List**/
+.post-cont {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+.post-header, .entry-header {
+    border-left: 6px solid #0072bb;
+    padding: 12px 18px;
+    margin-bottom: 12px;
+}
+.post-cont .post-header .post-title {
+    margin: 0 0 12px;
+}
+.post-title {
+    font-size: 20px;
+    font-weight: normal;
+    color: #0072bb;
+    margin: 0 0 20px;
+}
+.list-countersec, .list-countersec .date a {
+    font-size: 14px;
+    color: #808080;
+    line-height: 22px;
+}
+.list-countersec .by-author {
+    color: #0072bb;
+}
+.list-countersec .date {
+    background: url(../images/icon-sprite.png) 4px top no-repeat;
+    padding-left: 28px;
+}
+.post-disc {
+    padding: 0 26px;
+}
+.post-cont .post-disc .listimg {
+    text-align: center;
+}
+.post-cont .post-disc .listimg img {
+    max-width: 400px;
+}
+p {
+    word-break: break-all;
+}
+.post-cont .post-disc .view_more {
+    background: #0072bb;
+    padding: 10px 10px;
+    color: #fff;
+    text-align: center;
+    margin: 10px 0 0;
+    display: block;
+    float: left;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+a, a:hover{text-decoration: none;}
+
+.col-left {
+    padding: 0 15px 0 0;
+}
+.content-area {
+    padding: 0;
+}
+.site-content p, .site-content li {
+    text-align: justify;
+    word-break: keep-all;
+    line-height: 22px;
+    word-break: inherit;
+}
+.col-right {
+    padding: 0 0 0 8px;
+    font-size: 14px;
+}
+.widget-area{position: relative; height: auto;}
+.widget-area .widget {
+    position: relative!important;
+    top: 0!important;
+    margin-bottom: 20px;
+}
+.widget-area .widget-title {
+    background: #0072bb;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    line-height: 30px;
+    padding: 0 12px;
+    margin: 0 0 10px;
+}
+.utcw-4nkbnb0 {
+    word-wrap: break-word;
+    text-align: justify;
+}
+.authorinfo{
+  width: 75%;
+  word-break: break-all;
+}
+.authorphoto{
+  width: 25%
+}
+.font16{font-size: 16px;}
+.post-edit-icon {
+    color: #000;
+    line-height: 0px;
+    margin-left: 5px;
+}
+.view_more {
+    background: #0072bb;
+    padding: 10px 10px;
+    color: #fff;
+    text-align: center;
+    margin: 10px 0 0;
+    display: block;
+    float: left;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+.search-line-height{line-height: 55px}
+.select-header-search{
+    background: #fff;
+    margin: 6px;
+    padding: 3px;
+    border: none;
+    margin-left: 0px;
+    margin-top: 3px;
+}
+.select-search{
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+.rightborder{border-right:1px solid #ccc !important;}
+.commentbox{
+  height: 40px;
+  width: 782px;
+  padding: 10px;
+}
+.commentbtn{height: 40px; vertical-align: top;}
+
+.comment-count{
+  font-weight: bold;
+}
+.comment-hr{
+  margin-top: 10px;
+  width: 85px;
+  text-align: left;
+  float: left;
+  border-bottom: 2px solid #0072bb;
+}
+.authorphoto-comment{width: 8%;}
+.authorinfo-comment{width: 85%;}
+.comment-ul{padding-left: 0px !important;}
+.comment-date{
+  background: url(../images/icon-sprite.png) 0px top no-repeat;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #808080;
+}
+.comment-profile-info{padding-bottom: 10px;}
+.comment-li{border-bottom: 1px solid #ccc; margin: 10px 0 10px 0;}
+..btn-primary:disabled, .btn-primary[disabled]{width: 40px;}
+.delete-icon{
+  background: url(../images/delete.png) no-repeat; 
+  width: 20px; float: right; 
+  cursor: pointer;
+}
+/** Blog List**/
