@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 {% block body %}
 
 <div>
@@ -11,14 +12,14 @@
 
 		<div class="container-fluid">
 	        <div class="row">
-	            <h3 class="pull-left">Signup</h3>
+	            <h3 class="pull-left">{% trans "Signup" %}</h3>
 	        </div>
 	    </div>
 	    <hr class="clearfix" />
 		<form data-toggle="validator" role="form" action="" method="post" name="formSignup" id="formSignup">{% csrf_token %}
 		  
 			<div class="form-group">
-				<label class="control-label">Name</label>
+				<label class="control-label">{% trans "Name" %}</label>
 				<div class="form-inline row">
 		    		<div class="form-group col-sm-6">
 		    			{{ form.first_name }}
@@ -39,7 +40,7 @@
 		  	</div>
 		  
 		  	<div class="form-group">
-		    	<label for="inputEmail" class="control-label">Email</label>
+		    	<label for="inputEmail" class="control-label">{% trans "Email" %}</label>
 		    	{{ form.email }}
 		    	{% if form.email.errors %}
 		    	<div class="help-block with-errors">{{ form.email.errors|join:", " }}</div>
@@ -47,7 +48,7 @@
 		  	</div>
 
 		  	<div class="form-group">
-		    	<label for="inputPassword" class="control-label">Password</label>
+		    	<label for="inputPassword" class="control-label">{% trans "Password" %}</label>
 		    	<div class="form-inline row">
 				    <div class="form-group col-sm-6">
 				      	{{ form.password }}
@@ -66,7 +67,7 @@
 		  	</div>
 
 		  	<div class="form-group">
-		    	<label for="inputPassword" class="control-label">Captcha</label>
+		    	<label for="inputPassword" class="control-label">{% trans "Captcha" %}</label>
 		    	<div class="form-inline row">
 				    <div class="form-group col-sm-6">
 				      	{{ form.captcha }}
@@ -77,8 +78,8 @@
 		    	</div>
 		  	</div>
 		  	<div class="form-group">
-		    	<button type="submit" class="btn btn-primary">Submit</button>
-		    	<button type="reset" value="Reset" class="btn btn-primary">Reset</button>
+		    	<button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
+		    	<button type="reset" value="Reset" class="btn btn-primary">{% trans "Reset" %}</button>
 		  	</div>
 		</form>
 

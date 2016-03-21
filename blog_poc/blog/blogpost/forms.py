@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 from captcha.fields import CaptchaField
 from django.contrib.auth.models import User
@@ -16,24 +17,24 @@ class UserForm(forms.Form):
     """
     first_name = forms.CharField(max_length=30, label='First Name', strip=True,
                                 widget=forms.TextInput(attrs=dict(attrs_dict,
-                                                        placeholder='First Name')),
+                                                        placeholder=_('First Name'))),
                                 error_messages={'required': 'Please enter your first name'})
     last_name = forms.CharField(max_length=30,
                                 widget=forms.TextInput(attrs=dict(attrs_dict,
-                                                        placeholder='Last Name')),
+                                                        placeholder=_('Last Name'))),
                                 strip=True,
                                 error_messages={'required': 'Please enter your last name'})
     email = forms.EmailField(widget=forms.EmailInput(attrs=dict(attrs_dict,
-                            maxlength=200, placeholder='Email')),
+                            maxlength=200, placeholder=_('Email'))),
                             label='Email',
                             strip=True,
                             error_messages={'required': 'Please enter your email'})
     password = forms.CharField(widget=forms.PasswordInput(attrs=dict(attrs_dict,
-                                                            placeholder='Password')),
-                                label='Password', help_text='Minimum of 6 characters',
+                                                            placeholder=_('Password'))),
+                                label='Password', help_text=_('Minimum of 6 characters'),
                                 error_messages={'required': 'Please enter your password'})
     confirmpassword = forms.CharField(widget=forms.PasswordInput(attrs=dict(attrs_dict,
-                                                                placeholder='Confirm Password')),
+                                                                placeholder=_('Confirm Password'))),
                                         label='Confirm Password',
                                        error_messages={'required': 'Please enter your confirm password'})
     captcha = CaptchaField()

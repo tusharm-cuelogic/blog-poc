@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load i18n %}
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
@@ -38,7 +39,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{% url 'dashboard' %}">Home</a>
+                <a class="navbar-brand" href="{% url 'dashboard' %}">{% trans "Home" %}</a>
             </div>
             
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -52,7 +53,7 @@
 						<a href="{% url 'blogpost:my-blog' %}">My Blogs</a>
 					</li>
 					<li>
-						<a href="{% url 'blogpost:posts' %}">Blogs</a>
+						<a href="{% url 'blogpost:posts' %}">{% trans "Blogs" %}</a>
 					</li>
 					<li>
 						<a href="{% url 'blogpost:editblog' %}">Add Blog</a>
@@ -62,13 +63,13 @@
 					</li>
 					{% else %}
 					<li>
-						<a href="{% url 'blogpost:posts' %}">Blog</a>
+						<a href="{% url 'blogpost:posts' %}">{% trans "Blog" %}</a>
 					</li>
 					<li>
-						<a href="{% url 'login' %}">Login</a>
+						<a href="{% url 'login' %}">{% trans "Login" %}</a>
 					</li>
 					<li>
-						<a href="{% url 'blogpost:signup' %}">Signup</a>
+						<a href="{% url 'blogpost:signup' %}">{% trans "Signup" %}</a>
 					</li>
 					{% endif %}
                 </ul>
@@ -99,7 +100,7 @@
 	{% block footer %}
 	<div class="container marketing">
 	<footer>
-	    <p class="pull-right"><a href="#">Back to Top</a></p>
+	    <p class="pull-right"><a href="#">{% trans "Back to Top" %}</a></p>
 	</footer>
 	</div>
 	{% endblock footer %}

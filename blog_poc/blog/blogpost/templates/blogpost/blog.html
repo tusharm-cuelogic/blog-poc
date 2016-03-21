@@ -47,7 +47,7 @@
 					    				<div class="widget comment-profile-info">
 											<div class="utcw-4nkbnb0 tagcloud pull-left authorphoto-comment">
 												<a href="/blog/profile/{{comments.comment_info.userid_id}}">
-													<img class="media-object profile-pic" src="/static/blog/user_profile_img/{{comments.comment_userprofile_obj.user_photo}}" alt="Pranav Naxane" width="60">
+													<img class="media-object profile-pic" src="/{{comments.comment_userprofile_obj.user_photo}}" alt="Pranav Naxane" width="60">
 												</a>
 											</div>
 											<div class="pull-left authorinfo-comment">
@@ -84,11 +84,11 @@
 						<div class="utcw-4nkbnb0 tagcloud pull-left authorphoto">
 							{% if blog_post.post.userid_id == user.id %}
 								<a href="/blog/profile">
-									<img class="media-object profile-pic img-circle" src="/static/blog/user_profile_img/{{blog_post.userprofile_obj.user_photo}}" alt="{{blog_post.user_obj.first_name}} {{blog_post.user_obj.last_name}}" width="60">
+									<img class="media-object profile-pic img-circle" src="/{{blog_post.userprofile_obj.user_photo}}" alt="{{blog_post.user_obj.first_name}} {{blog_post.user_obj.last_name}}" width="60">
 								</a>
 							{% else %}
 								<a href="/blog/profile/{{blog_post.post.userid_id}}">
-									<img class="media-object profile-pic img-circle" src="/static/blog/user_profile_img/{{blog_post.userprofile_obj.user_photo}}" alt="{{blog_post.user_obj.first_name}} {{blog_post.user_obj.last_name}}" width="60">
+									<img class="media-object profile-pic img-circle" src="/{{blog_post.userprofile_obj.user_photo}}" alt="{{blog_post.user_obj.first_name}} {{blog_post.user_obj.last_name}}" width="60">
 								</a>
 							{% endif %}
 							

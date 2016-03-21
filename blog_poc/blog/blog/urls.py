@@ -13,15 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from blog.views import dashboard_view
 
 urlpatterns = [
+    url(r'^(?P<filename>(robots.txt)|(humans.txt))$', dashboard_view, name='dashboard'),
+]
+
+urlpatterns += i18n_patterns(
     url(r'^admin/', admin.site.urls),
     url(r'^$', dashboard_view, name='dashboard'),
-    url(r'^blog/', include('blogpost.urls', namespace='blogpost')),
+    url(r'^captcha/', include('captcha.urls')),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': 'dashboard'}, name='logout'),
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name="login"),
-    url(r'^captcha/', include('captcha.urls')),
-]
+    url(r'^blog/', include('blogpost.urls', namespace='blogpost')),
+)

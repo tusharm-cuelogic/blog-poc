@@ -353,7 +353,7 @@ def blog_detail_view(request, **kwargs):
 
             text = nltk.word_tokenize(post.content)
             posTagged = pos_tag(text)
-            simplifiedTags = [(word, map_tag('en-ptb', 'universal', tag)) for word, tag in posTagged]
+            simplifiedTags = set([(word, map_tag('en-ptb', 'universal', tag)) for word, tag in posTagged])
 
             if blog_data['userprofile_obj'].user_photo:
                 pass
