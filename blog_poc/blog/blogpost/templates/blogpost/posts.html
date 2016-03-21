@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<link href="{% static 'blog/jquery-ui.css' %}" rel="stylesheet">
+
+<div>
+	<div class='container'>
+
+	    <div class="blog-title">
+		    <h1 class="page-title pull-left">Blogs</h1>
+		</div>
+		<hr class="clearfix" />
+		<form role="search" method="post" class="search-form" action="" name="frmSearch">
+			{% csrf_token %}
+			
+			<div class="pull-left">
+				<div class="pull-left select-header-search"> 
+		    		<label class="search-label">
+						<select class="select-search" name="search_type" onchange="searchType()" id="search_type">
+							<option value="title" {% if search_value.1 == 'title' %}selected{% endif %}>Title</option>
+							<option value="content" {% if search_value.1 == 'content' %}selected{% endif %}>Content</option>
+							{% if not my_blog == 'my_blog' %}
+								<option value="author" {% if search_value.1 == 'author' %}selected{% endif %}>Author</option>
+							{% endif %}
+							<option value="date" {% if search_value.1 == 'date' %}selected{% endif %}>Date</option>
+						</select>
+						<input type="hidden" name="hiddendate" id="hiddendate" value="{{search_value.1}}">
+					</label>
+				</div>
+			</div>
+			<div class="pull-left" id="text_search">
+				<div class="pull-left header-search"> 
+		    		<label class="search-label">
+						<input type="search" class="search-field" placeholder="Title …" value="{{search_value.0}}" name="search_text" title="Search for:">
+					</label>
+				</div>
+			</div>
+			<div class="pull-left" id="date_search" style="display:none">
+				<div class="pull-left header-search"> 
+					<input type="text" id="from" name="from" placeholder="From" class="search-field rightborder" value="{{date_search_value.0}}">
+					<input type="text" id="to" name="to" placeholder="To" class="search-field" value="{{date_search_value.1}}">
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<div>
+				<input type="submit" class="search-submit btn btn-primary" value="Submit">
+				<input type="reset" class="search-submit btn btn-primary reset" value="Reset">
+			</div>
+		</form>
+		<div class="clearfix"></div>
+	    <hr class="clearfix" />
+	    {% if blog_post %}
+	    	{% for posts in blog_post %}
+   				<div class="post-cont">  
+					<div class="post-header">
+				    	<h1 class="post-title"><a href="/blog/{{posts.post_info.slug}}-{{posts.post_info.id}}">{{posts.post_info.title}}</a></h1>
+				        <div class="list-countersec"> <span class="by-author">by 
+				        	{% if posts.post_info.userid_id == user.id %}
+					        	<a href="/blog/profile">
+					        		{{posts.user_obj.first_name}} {{posts.user_obj.last_name}}
+					        	</a>
+					        {% else %}
+					        	<a href="/blog/profile/{{posts.post_info.userid_id}}">
+					        		{{posts.user_obj.first_name}} {{posts.user_obj.last_name}}
+					        	</a>
+				        	{% endif %}
+				        	</span> <span class="date">{{posts.post_info.pub_date|date:"M d, Y"}}</span>
+
+				        	{% if posts.post_info.userid_id == user.id %}
+					        	<a href="/blog/edit/{{posts.post_info.id}}">
+					        		<i class="glyphicon glyphicon-edit post-edit-icon"></i>
+					        	</a>
+				        	{% endif %}
+				        	<!--<span class="comment"></span>--> <!-- <span class="view">116 Views</span></div> -->
+						</div>
+					</div>
+					<div class="post-disc">
+						<div class="listimg"><img src=""></div>
+					    <p>{{posts.post_info.content|slice:"0:200"}} ...</p>
+					    <a href="/blog/{{posts.post_info.slug}}-{{posts.post_info.id}}" class="view_more"> Continue Reading </a>
+					    <div class="clearfix"></div>
+					</div>
+
+					<div class="clearfix"></div>
+				</div>	
+	    	{% endfor %}
+	    	
+	    	<div class="pagination">
+			    <span class="step-links">
+			        {% if pagination_data.has_previous %}
+			            <a href="?page={{ pagination_data.previous_page_number }}">Previous</a>
+			        {% endif %}
+
+			        <span class="current">
+			            Page {{ pagination_data.number }} of {{ pagination_data.paginator.num_pages }}
+			        </span>
+
+			        {% if pagination_data.has_next %}
+			            <a href="?page={{ pagination_data.next_page_number }}">Next</a>
+			        {% endif %}
+			    </span>
+			</div>
+	    {% endif %}
+	</div>
+</div>
+{% endblock body %}
+
+

@@ -1,0 +1,24 @@
+<li class="comment-li" id="li-{{comment_info.comments.id}}">
+	<div class="widget comment-profile-info">
+		<div class="utcw-4nkbnb0 tagcloud pull-left authorphoto-comment">
+			<a href="/blog/profile/{{comment_info.comments.userid_id}}">
+				<img class="media-object profile-pic" src="/static/blog/user_profile_img/{{comment_info.userprofile_obj.user_photo}}" alt="Pranav Naxane" width="60">
+			</a>
+		</div>
+		<div class="pull-left authorinfo-comment">
+			<div>
+				<a href="/blog/profile/{{comment_info.comments.userid_id}}" class="font16">
+					{{comment_info.user_obj.first_name}} {{comment_info.user_obj.last_name}}
+				</a>
+			</div>
+			<div>{{comment_info.comments.comment}}</div>
+			<div>
+				<span class="comment-date">{{comment_info.comments.timestamp|date:"M d, Y"}}</span>
+				{% if comment_info.comments.userid_id == user.id %}
+					<span class="delete-icon" postid="{{comment_info.comments.postid_id}}" commentid="{{comment_info.comments.id}}">&nbsp;</span>
+				{% endif %}
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</li>
